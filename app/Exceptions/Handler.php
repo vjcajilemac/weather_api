@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
+use Illuminate\Auth\AuthenticationException;
 
 class Handler extends ExceptionHandler
 {
@@ -27,4 +28,13 @@ class Handler extends ExceptionHandler
             //
         });
     }
+    protected function unauthenticated($request, AuthenticationException $exception)
+    {
+
+        return ( $exception->guards()[0])
+        ? response()->json(['message' => 'token no autorizado','exception'=>$exception->getMessage(), 'statusService' => 'errorTokenNoAutorized', 'code' => 401, 'status' => false, 'errorCode' => $exception], 401)
+            : redirect()->guest(route('login'));
+
+    }
+    
 }
